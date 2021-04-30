@@ -1,5 +1,5 @@
 {
-  "name": "test_ctrlWeb",
+  "name": "test_ctrlweb",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",
     "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/style-resources": "^1.0.0",
     "@nuxtjs/stylelint-module": "^4.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.22.0",
@@ -27,6 +28,8 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.7.0",
     "prettier": "^2.2.1",
+    "sass": "^1.32.12",
+    "sass-loader": "^10.1.1",
     "stylelint": "^13.12.0",
     "stylelint-config-prettier": "^8.0.2",
     "stylelint-config-standard": "^21.0.0"

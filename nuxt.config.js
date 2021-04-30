@@ -3,7 +3,7 @@ export default {
   head: {
     title: 'test_ctrlWeb',
     htmlAttrs: {
-      lang: 'en',
+      lang: 'ru',
     },
     meta: [
       { charset: 'utf-8' },
@@ -13,8 +13,16 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
+  loading: {
+    color: 'blue',
+    height: '5px',
+  },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: ['@/assets/scss/index.scss'],
+  styleResources: {
+    scss: ['@/assets/scss/_variables.scss', '@/assets/scss/_functions.scss'],
+  },
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [],
@@ -28,6 +36,7 @@ export default {
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/stylelint
     '@nuxtjs/stylelint-module',
+    '@nuxtjs/style-resources',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules

@@ -31,6 +31,7 @@
   padding: rem(16) rem(16) rem(22) rem(16);
 }
 .card__image {
+  position: relative;
   overflow: hidden;
   background: #c4c4c4;
   height: 170px;

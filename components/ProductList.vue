@@ -1,19 +1,21 @@
 <template>
-  <div class="product-list">
-    <Card
-      v-for="product in filtredOnCategory"
-      :key="product.id"
-      class="product-card"
-    >
+  <transition-group
+    tag="div"
+    type="transition"
+    name="flip-list"
+    class="product-list"
+  >
+    <Card v-for="product in value" :key="product.id" class="product-card">
       <div v-show="product.discount" class="product-card__discount">
         -{{ product.discount }}%
       </div>
       <template #image>
         <img
+          v-lazy="product.photo"
           class="product-card__photo"
-          :src="product.photo"
           :alt="product.name"
         />
+        <span class="loader"></span>
       </template>
       <template #title>
         <span class="product-card__title">{{ product.name }}</span>
@@ -57,46 +59,18 @@
         </button>
       </template>
     </Card>
-  </div>
+  </transition-group>
 </template>
 
 <script>
 import { mapMutations, mapActions } from 'vuex'
 import { currency, unit } from '@/utils/NumberFormating'
-import { sortOptions } from '@/constants'
 
 export default {
   props: {
-    sort: {
-      type: String,
-      validation: (prop) => sortOptions.some(({ value }) => value === prop),
-      default: sortOptions[0].value,
-    },
-  },
-  computed: {
-    productList() {
-      return this.$store.state.products.productList
-    },
-    sortedProductList() {
-      return [...this.productList].sort((a, b) => {
-        return sortOptions
-          .find(({ value }) => value === this.sort)
-          .handler(a, b)
-      })
-    },
-    selectedCategory() {
-      return this.$store.state.products.selectedCategory
-    },
-    filtredOnCategory() {
-      if (!this.selectedCategory?.id) {
-        return this.sortedProductList
-      }
-
-      return this.sortedProductList.filter(
-        (item) =>
-          item.parent_section === this.selectedCategory?.id ||
-          item.section === this.selectedCategory?.id
-      )
+    value: {
+      type: Array,
+      required: true,
     },
   },
   methods: {
@@ -123,6 +97,12 @@ export default {
 </script>
 
 <style lang="scss">
+.flip-list-move {
+  transition: transform 0.5s;
+}
+.flip-list-leave-active {
+  transition: 0s;
+}
 .product-list {
   display: flex;
   flex-wrap: wrap;

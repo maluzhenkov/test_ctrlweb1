@@ -1,28 +1,68 @@
 <template>
-  <div class="container">Hello World</div>
+  <div class="container-fluid">
+    <Breadcrumbs />
+    <div class="row">
+      <div class="col-1 category-menu">
+        <TreeView :tree-data="categories" />
+      </div>
+      <div class="col">
+        <div class="main-content">
+          <div class="categorie-title">
+            {{ selectedCategoryName ? selectedCategoryName : 'Все продукты' }}
+          </div>
+          <select v-model="typeSort" class="custom-select">
+            <option
+              v-for="{ value, text } in sortOptions"
+              :key="value"
+              :value="value"
+            >
+              {{ text }}
+            </option>
+          </select>
+          <ProductList :sort="typeSort" />
+          <Pagination />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-export default {}
+import { sortOptions } from '@/constants'
+
+export default {
+  data() {
+    return {
+      typeSort: 'ascPrice',
+      sortOptions,
+    }
+  },
+  async fetch({ store }) {
+    await store.dispatch('products/getCategories')
+    await store.dispatch('products/getProducts')
+  },
+  computed: {
+    categories() {
+      return this.$store.state.products.categories
+    },
+    selectedCategoryName() {
+      return this.$store.state.products.selectedCategory?.name
+    },
+  },
+}
 </script>
 
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+<style lang="scss">
+.category-menu {
+  flex-direction: column;
+  min-width: rem(232);
 }
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+.categorie-title {
+  font-weight: bold;
+  font-size: rem(32);
+  line-height: 125%;
+  letter-spacing: -1px;
+  color: #000;
+  margin-bottom: rem(24);
 }
 </style>

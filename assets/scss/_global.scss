@@ -38,3 +38,7 @@ img {
 select {
   user-select: none;
 }
+
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}

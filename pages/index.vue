@@ -10,7 +10,7 @@
           <div class="categorie-title">
             {{ selectedCategoryName ? selectedCategoryName : 'Все продукты' }}
           </div>
-          <select v-model="typeSort" class="custom-select">
+          <select v-model="sort" class="custom-select">
             <option
               v-for="{ value, text } in sortOptions"
               :key="value"
@@ -19,8 +19,8 @@
               {{ text }}
             </option>
           </select>
-          <ProductList :sort="typeSort" />
-          <Pagination />
+          <ProductList :value="paginatedData" />
+          <Pagination v-model="page" :length="pageCount" />
         </div>
       </div>
     </div>
@@ -30,10 +30,13 @@
 <script>
 import { sortOptions } from '@/constants'
 
+const MAX_ITEM_PER_PAGE = 15
+
 export default {
   data() {
     return {
-      typeSort: 'ascPrice',
+      page: 1,
+      sort: 'ascPrice',
       sortOptions,
     }
   },
@@ -42,17 +45,61 @@ export default {
     await store.dispatch('products/getProducts')
   },
   computed: {
+    productList() {
+      return this.$store.state.products.productList
+    },
+    sortedProductList() {
+      return [...this.productList].sort((a, b) => {
+        return sortOptions
+          .find(({ value }) => value === this.sort)
+          .handler(a, b)
+      })
+    },
+    filtredOnCategory() {
+      if (!this.selectedCategory?.id) {
+        return this.sortedProductList
+      }
+
+      return this.sortedProductList.filter(
+        (item) =>
+          item.parent_section === this.selectedCategory?.id ||
+          item.section === this.selectedCategory?.id
+      )
+    },
+    pageCount() {
+      const length = this.filtredOnCategory.length
+      return length > MAX_ITEM_PER_PAGE
+        ? Math.ceil(length / MAX_ITEM_PER_PAGE)
+        : 1
+    },
+    paginatedData() {
+      return this.filtredOnCategory.slice(
+        (this.page - 1) * MAX_ITEM_PER_PAGE,
+        this.page * MAX_ITEM_PER_PAGE
+      )
+    },
     categories() {
       return this.$store.state.products.categories
     },
+    selectedCategory() {
+      return this.$store.state.products.selectedCategory
+    },
     selectedCategoryName() {
       return this.$store.state.products.selectedCategory?.name
+    },
+  },
+  watch: {
+    filtredOnCategory() {
+      this.page = 1
     },
   },
 }
 </script>
 
 <style lang="scss">
+.main-content {
+  padding-bottom: rem(48);
+}
 .category-menu {
   flex-direction: column;
   min-width: rem(232);

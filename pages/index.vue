@@ -1,29 +1,44 @@
 <template>
-  <div class="container-fluid">
+  <div class="wrapper">
     <Breadcrumbs />
-    <div class="row">
-      <div class="col-1 category-menu">
-        <TreeView :tree-data="categories" />
-      </div>
-      <div class="col">
-        <div class="main-content">
-          <div class="categorie-title">
-            {{ selectedCategoryName ? selectedCategoryName : 'Все продукты' }}
-          </div>
-          <select v-model="sort" class="custom-select">
-            <option
-              v-for="{ value, text } in sortOptions"
-              :key="value"
-              :value="value"
-            >
-              {{ text }}
-            </option>
-          </select>
-          <ProductList :value="paginatedData" />
-          <Pagination v-model="page" :length="pageCount" />
-        </div>
-      </div>
+    <div class="category-menu">
+      <TreeView :tree-data="categories" />
     </div>
+    <transition name="show">
+      <div v-show="isOpenMobileMenu" class="category-menu-mobile">
+        <TreeView
+          :tree-data="categories"
+          close
+          @close="isOpenMobileMenu = false"
+        />
+      </div>
+    </transition>
+    <main class="main-content">
+      <h3 class="categorie-title">
+        {{ selectedCategoryName ? selectedCategoryName : 'Все продукты' }}
+      </h3>
+      <div class="toolbar">
+        <button
+          class="btn category-menu-mobile-btn"
+          type="button"
+          @click="isOpenMobileMenu = true"
+        >
+          <BaseIcon name="burger" />
+          <span>Категории</span>
+        </button>
+        <select v-model="sort" class="custom-select">
+          <option
+            v-for="{ value, text } in sortOptions"
+            :key="value"
+            :value="value"
+          >
+            {{ text }}
+          </option>
+        </select>
+      </div>
+      <ProductList :value="paginatedData" />
+      <Pagination v-model="page" :length="pageCount" />
+    </main>
   </div>
 </template>
 
@@ -35,6 +50,7 @@ const MAX_ITEM_PER_PAGE = 15
 export default {
   data() {
     return {
+      isOpenMobileMenu: false,
       page: 1,
       sort: 'ascPrice',
       sortOptions,
@@ -97,12 +113,79 @@ export default {
 </script>
 
 <style lang="scss">
+.wrapper {
+  display: grid;
+  grid-template-areas:
+    'breadcrumbs breadcrumbs'
+    'menu content';
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr 5fr;
+  grid-gap: rem(32);
+  padding-left: rem(32);
+  padding-right: rem(32);
+  margin: 0 auto;
+  max-width: 1440px;
+  @media (max-width: $md) {
+    grid-template-areas:
+      'breadcrumbs'
+      'content';
+    grid-template-rows: auto;
+    grid-template-columns: 1fr;
+  }
+  @media (max-width: $sm) {
+    padding-left: rem(12);
+    padding-right: rem(12);
+  }
+}
+.toolbar {
+  display: flex;
+  .category-menu-mobile-btn {
+    display: none;
+    padding: rem(8);
+    border: 1px solid #e6e6e6;
+    border-radius: rem(4);
+    margin-right: rem(32);
+    @media (max-width: $md) {
+      display: flex;
+    }
+  }
+}
 .main-content {
+  grid-area: content;
   padding-bottom: rem(48);
 }
 .category-menu {
+  grid-area: menu;
   flex-direction: column;
   min-width: rem(232);
+  background-color: $white;
+  @media (max-width: $md) {
+    display: none;
+  }
+  .menu {
+    position: sticky;
+    top: rem(60);
+    border: 1px solid #e6e6e6;
+    border-radius: rem(8);
+  }
+}
+.category-menu-mobile {
+  z-index: 5;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: $white;
+  .menu {
+    border: none;
+  }
+  .menu__title {
+    font-size: 32px;
+    line-height: 125%;
+  }
 }
 .categorie-title {
   font-weight: bold;
@@ -111,5 +194,14 @@ export default {
   letter-spacing: -1px;
   color: #000;
   margin-bottom: rem(24);
+}
+.show-enter-active,
+.show-leave-enter {
+  transform: translateX(0);
+  transition: transform 0.2s linear;
+}
+.show-enter,
+.show-leave-to {
+  transform: translateX(-100%);
 }
 </style>

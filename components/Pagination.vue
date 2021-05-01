@@ -66,6 +66,8 @@ export default {
   display: flex;
   justify-content: center;
   color: $primary-90;
+  margin-top: rem(40);
+
   .btn_prev {
     font-size: rem(14);
     margin-right: rem(20);

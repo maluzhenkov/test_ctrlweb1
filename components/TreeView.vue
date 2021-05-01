@@ -1,15 +1,25 @@
 <template>
   <menu class="menu">
-    <div class="menu__title">
-      <span>{{ title }}</span>
-      <button
-        v-show="selectedCategoryId"
-        class="btn"
-        type="button"
-        @click="resetCategory"
-      >
-        Сброс
-      </button>
+    <div class="menu__header">
+      <span class="menu__title">{{ title }}</span>
+      <div class="menu__actions">
+        <button
+          v-show="selectedCategoryId"
+          class="btn"
+          type="button"
+          @click="resetCategory"
+        >
+          Сброс
+        </button>
+        <button
+          v-if="close"
+          class="btn close"
+          type="button"
+          @click="$emit('close')"
+        >
+          &times;
+        </button>
+      </div>
     </div>
     <ul class="menu__list main-list">
       <TreeItem
@@ -35,6 +45,10 @@ export default {
       type: String,
       default: 'Категории',
     },
+    close: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     selectedCategoryId() {
@@ -54,24 +68,31 @@ export default {
 
 <style lang="scss">
 .menu {
-  position: sticky;
-  top: rem(60);
+  user-select: none;
   overflow: hidden;
   padding: 0;
-  border: 1px solid #e6e6e6;
-  border-radius: rem(8);
-  flex-grow: 0;
-  user-select: none;
 }
-.menu__title {
+.menu__header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: rem(8) rem(16);
+  border-bottom: 1px solid #e6e6e6;
+}
+.menu__title {
   font-weight: bold;
   font-size: rem(16);
   line-height: 150%;
-  padding: rem(8) rem(16);
-  border-bottom: 1px solid #e6e6e6;
   color: $black;
+}
+.menu__actions {
+  display: flex;
+  & > *:not(:last-child) {
+    margin-right: 2.5rem;
+  }
+  .close {
+    font-size: 2.5rem;
+  }
 }
 .menu__list {
   list-style: none;

@@ -1,22 +1,16 @@
-export function currency(num, locale = 'ru-RU', currency = 'RUB') {
-  return Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 0,
-  }).format(num)
+// похоже NODE server не шарит за unit и maximumFractionDigits у Intl
+
+export function currency(num, locale = 'ru-RU') {
+  return (
+    new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(num) +
+    ' ₽'
+  )
 }
 
-export function unit(num, locale = 'ru-RU') {
+export function unit(num) {
   const kg = num / 1000
   if (kg >= 1) {
-    return Intl.NumberFormat(locale, {
-      style: 'unit',
-      unit: 'kilogram',
-      maximumFractionDigits: 1,
-    }).format(kg)
+    return kg.toFixed(1) + ' кг'
   }
-  return Intl.NumberFormat(locale, {
-    style: 'unit',
-    unit: 'gram',
-  }).format(num)
+  return num + ' г'
 }

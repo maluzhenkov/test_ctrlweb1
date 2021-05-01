@@ -104,16 +104,19 @@ export default {
   transition: 0s;
 }
 .product-list {
-  display: flex;
-  flex-wrap: wrap;
-  margin-right: rem(-32);
-  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-column-gap: rem(32);
+  grid-row-gap: rem(24);
+  width: 100%;
   margin-top: rem(24);
-}
-.product-card {
-  flex: 0 0 rem(200);
-  margin-right: rem(32);
-  margin-bottom: rem(24);
+  @media (max-width: $md) {
+    grid-column-gap: rem(24);
+    grid-row-gap: rem(16);
+  }
+  @media (max-width: $sm) {
+    grid-gap: rem(4);
+  }
 }
 .product-card__photo {
   height: 100%;

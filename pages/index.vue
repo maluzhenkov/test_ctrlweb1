@@ -17,25 +17,7 @@
       <h3 class="categorie-title">
         {{ selectedCategoryName ? selectedCategoryName : 'Все продукты' }}
       </h3>
-      <div class="toolbar">
-        <button
-          class="btn category-menu-mobile-btn"
-          type="button"
-          @click="isOpenMobileMenu = true"
-        >
-          <BaseIcon name="burger" />
-          <span>Категории</span>
-        </button>
-        <select v-model="sort" class="custom-select">
-          <option
-            v-for="{ value, text } in sortOptions"
-            :key="value"
-            :value="value"
-          >
-            {{ text }}
-          </option>
-        </select>
-      </div>
+      <Toolbar v-model="sort" @openMobileMenu="isOpenMobileMenu = true" />
       <ProductList :value="paginatedData" />
       <Pagination v-model="page" :length="pageCount" />
     </main>
@@ -52,8 +34,7 @@ export default {
     return {
       isOpenMobileMenu: false,
       page: 1,
-      sort: 'ascPrice',
-      sortOptions,
+      sort: sortOptions[0].value,
     }
   },
   async fetch({ store }) {
@@ -65,11 +46,9 @@ export default {
       return this.$store.state.products.productList
     },
     sortedProductList() {
-      return [...this.productList].sort((a, b) => {
-        return sortOptions
-          .find(({ value }) => value === this.sort)
-          .handler(a, b)
-      })
+      const handler = sortOptions.find(({ value }) => value === this.sort)
+        .handler
+      return [...this.productList].sort((a, b) => handler(a, b))
     },
     filtredOnCategory() {
       if (!this.selectedCategory?.id) {
@@ -78,8 +57,8 @@ export default {
 
       return this.sortedProductList.filter(
         (item) =>
-          item.parent_section === this.selectedCategory?.id ||
-          item.section === this.selectedCategory?.id
+          item.parent_section === this.selectedCategory.id ||
+          item.section === this.selectedCategory.id
       )
     },
     pageCount() {
